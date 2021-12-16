@@ -187,12 +187,11 @@ else if(arg[3]=='operathion') {
     let answer;
 
 
-// 1) сложение (при двух одинаковых знаках)
     if ((string[0][0] == string[1]) || (string[1] == '+' && string[0][0] != '-' && string[2][0] != '-')) {
         answer = add(first, second);
         result += answer + '\n';
-// 2) вычитание (при двух разных знаках)
-    } else {
+    } 
+    else {
         answer = sub(first, second);
         result += answer + '\n';
     }
