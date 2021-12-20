@@ -90,7 +90,7 @@ function add(first, second) {
     }
     if (dop >= 1) {
         if (gain == 1);
-        else summa = '0' + summa.slice(0, 23);
+        else summa = '0' + summa.slice(0, 22);
         gain++;
     }
 
