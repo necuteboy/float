@@ -1,2 +1,2 @@
 # Андрейчиков Сергей
-для запуска node.exe float.js файл operathion(conver)
+для запуска node.exe float.js файл calc(conv)
