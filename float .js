@@ -2,8 +2,37 @@ function bin (whole) {
     let ceil = whole.toString(2);
     return ceil;
 }
+function reverb(num) {
+    let si;
+    if (num<0){
+        si=1;
+    }
+    else si=0;
+    if (num >((2-Math.pow(2,-23))*Math.pow(2,127)) || num == Infinity) {
+        return("01111111100000000000000000000000");
+    }
+    else if (num < -((2-Math.pow(2,-23))*Math.pow(2,127)) || num == -Infinity) {
+        return("11111111100000000000000000000000");
+    }
+    else if (isNaN(num)) {
+        return("11111111110000000000000000000000");
+    }
+    num = Math.abs(num)
+    let whole = Math.floor(num);
+    let temp;
 
+    if (whole != num) temp = Number('0.' + String(num).split('.')[1]);
+    else temp=0;
+    let wbin = bin(whole);
+    let lenwbin = wbin.length;
+    order = (lenwbin > 0) ? lenwbin - 1 : (-1);
+    let tempbin = bintemp(temp, lenwbin)
+    let binorder = bin(order + 127);
+    let float = f(si, binorder, wbin, tempbin)
 
+    orders.push(order);
+    return float;
+}
 function bintemp (temp, lenwbin) {
     let flag;
     let tempbin = '';
@@ -23,11 +52,11 @@ function bintemp (temp, lenwbin) {
             if (isNaN(temp))
                 break;
         }
-    } else tempbin = '0'.repeat(24-lenwbin)
+    }
+    else tempbin = '0'.repeat(24-lenwbin)
     tempbin += '0'.repeat(24 - lenwbin - tempbin.length)
     return tempbin;
 }
-
 
 function f(si, orderBin,  wbin, tempbin) {
     let float = si;
@@ -49,6 +78,7 @@ function f2(orderBin) {
     }
     return order -= 127;
 }
+
 
 function float(conversion) {
     let binmantis = conversion.slice(9, 32);
@@ -100,7 +130,6 @@ function add(first, second) {
     return first.slice(0,9) + summa;
 }
 
-
 function sub(first, second) {
     let gain = -1;
     let diff = '';
@@ -136,42 +165,15 @@ function sub(first, second) {
     let si = (string[0] > string[2]) ? '0' : '1';
     return si + '0'.repeat(8 - ordtemp.length) + ordtemp + diff;
 }
-function reverb(num) {
-    let si;
-    if (num<0){
-        si=1;
-    }
-    else si=0;
-    num = Math.abs(num)
-    let whole = Math.floor(num);
-    let temp;
-
-    if (whole != num) temp = Number('0.' + String(num).split('.')[1]);
-    else temp=0;
-    let wbin = bin(whole);
-    let lenwbin = wbin.length;
-    order = (lenwbin > 0) ? lenwbin - 1 : (-1);
-    let tempbin = bintemp(temp, lenwbin)
-    let binorder = bin(order + 127);
-    let float = f(si, binorder, wbin, tempbin)
-
-    orders.push(order);
-    return float;
-}
 let result = '';
 let arg=process.argv;
 let fs = require('fs')
-let s = fs.readFileSync(arg[2], "utf8")
-let string = s.split(' ');
+let data = fs.readFileSync(arg[2],"utf8")
+let string = data.split(' ');
 let order;
 let orders = [];
-if(arg[3]=='conver') {
-    let answer = reverb(Number(string[0]));
-    console.log(answer);
-}
-
-
-else if(arg[3]=='operathion') {
+let frac=[];
+if (arg[3]=="calc") {
     if (string[1] == '-') {
         string[2] *= -1;
     }
@@ -181,20 +183,28 @@ else if(arg[3]=='operathion') {
             string[1] = '+';
         }
     }
-
     let first = reverb(Number(string[0]));
+    string[0] = String(string[0]);
     let second = reverb(Number(string[2]));
     let answer;
-
-
     if ((string[0][0] == string[1]) || (string[1] == '+' && string[0][0] != '-' && string[2][0] != '-')) {
         answer = add(first, second);
         result += answer + '\n';
-    } 
-    else {
-        answer = sub(first, second);
-        result += answer + '\n';
     }
+    else {
+            answer = sub(first, second);
+            result += answer + '\n';
+        }
     result += String(float(answer));
+    console.log(result)
+}
+else if(arg[3]=="conv"){
+    let result = reverb(Number(string));
     console.log(result);
 }
+//-5 + 1
+//5.3 + 1.2 6.499999523162842
+//340282360000000000000000000000000000000 01111111100000000000000000000000
+//10 негритят 11111111110000000000000000000000
+//-10.3 + 8.54 -1.7599992752075195
+//0= 0011111110000000000000000000000
